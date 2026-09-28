@@ -1,14 +1,16 @@
 # Quill template
 
 The starting point for a [Quill](https://github.com/Cloudmorrow/cloudmorrow/blob/main/docs/QUILLS.md):
-a package that adds data and screens to a Cloudmorrow — on the phone, in the
-browser, in the terminal, on the command line and to an assistant — with no UI
-code at all.
+a package that adds data, screens and what can be done with them to a
+Cloudmorrow — on the phone, in the browser, in the terminal, on the command
+line and to an assistant. It is TOML and Python and nothing else: no UI code,
+ever. [QUILLCODE.md](https://github.com/Cloudmorrow/cloudmorrow/blob/main/docs/QUILLCODE.md)
+is the contract for the Python.
 
 ## Start
 
-Either press **Use this template** above, or let the command line make one
-with your names filled in:
+Either press **Use this template** above (not *Fork*: a fork stays tied to
+this repository), or let the command line make one with your names filled in:
 
 ```sh
 pip install "cloudmorrow[tui] @ git+https://github.com/Cloudmorrow/cloudmorrow"
@@ -16,31 +18,38 @@ cm quill new plants --name Plants --summary "Your plants, and when you last wate
 ```
 
 If you used the template button, replace `example` with your Quill's id in
-`quill.toml` and `datamodels/item.toml`.
+`quill.toml`, `quill.py`, `tests/test_quill.py`, `pyproject.toml` and
+`datamodels/item.toml`.
+
+## What is in it
+
+| | |
+| --- | --- |
+| `quill.toml` | everything the Quill is and does: a datamodel, an overview drawn by code, a list, and two actions |
+| `quill.py` | the code behind the overview and the actions, run in a sandbox as whoever uses them |
+| `datamodels/` | the one datamodel it introduces, `example.item` |
+| `tests/` | tests against the real record store and gate, with `cloudmorrow.quill.testing` |
+| `CLAUDE.md`, `.claude/skills/` | how an assistant works on it: screens, actions, data, automation, machines, testing, publishing |
+| `.github/workflows/` | check and test on every push, in plain Python and in the sandbox; a release on a `v*` tag |
+| `pyproject.toml` | for working on it: `uv sync` gets Cloudmorrow and pytest |
 
 ## The loop
 
 ```sh
-cm quill check     # the manifest against the foundational datamodels, and a preview of every screen
-cm quill dev       # install it on your own server, on every device, now
+uv sync                  # .venv with Cloudmorrow and pytest
+cm quill check           # the manifest against the foundational datamodels, and a preview of every screen
+cm quill test            # tests/, against the real record store and gate
+cm quill test --sandbox  # the same, with quill.py in the sandbox, as a server runs it
+cm quill preview         # the overview, drawn as text
+cm quill dev --local     # a throwaway server on this machine, reinstalled as you save
+cm quill dev             # install it on your own server, on every device, now
 ```
 
-Or open the folder with an assistant: [CLAUDE.md](CLAUDE.md) teaches it the
-format and the loop, and it can drive both commands itself.
+Or open the folder with an assistant: [CLAUDE.md](CLAUDE.md) and the skills
+teach it the format and the loop, and it can drive every command itself.
 
-## Publish
+## Publishing
 
-Tag a release (`v1.0.0`) and open a pull request on
-[the Quill Catalog](https://github.com/Cloudmorrow/quill-catalog) adding it.
-
-## What it adds to your Cloudmorrow
-
-Keep this table true; the catalog page shows it.
-
-| | |
-| --- | --- |
-| Datamodels | introduces `example.item` |
-| Screens | one list, on the phone, the web app, the terminal, `cm example`, and to your assistant |
-| Jobs, datasets, services | none |
-
-The template is MIT-licensed, so a Quill made from it may use any licence.
+Tag a release (`v0.1.0`, the same as `version` in `quill.toml`) and open a
+pull request on [Cloudmorrow/quill-catalog](https://github.com/Cloudmorrow/quill-catalog)
+adding it to `catalog.toml`.
