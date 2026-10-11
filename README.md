@@ -50,6 +50,10 @@ teach it the format and the loop, and it can drive every command itself.
 
 ## Publishing
 
-Tag a release (`v0.1.0`, the same as `version` in `quill.toml`) and open a
-pull request on [Cloudmorrow/quill-catalog](https://github.com/Cloudmorrow/quill-catalog)
-adding it to `catalog.toml`.
+Release it: push a tag (`v0.1.0`, the same as `version` in `quill.toml`),
+publish a release on github.com, or run the **release** workflow in the
+Actions tab; it checks and tests once more and publishes the release. The
+first time, open a pull request on
+[Cloudmorrow/quill-catalog](https://github.com/Cloudmorrow/quill-catalog)
+adding it to `catalog.toml`; after that the catalog follows your releases
+by itself.
