@@ -146,6 +146,14 @@ label = "Garage"
 view = "garage"                    # instead of kit = …
 model = "vehicle"                  # optional: circles fit it by this
 
+[[screens]]                        # a view can be the person's own settings for the Quill:
+id = "tracker"                     # never a tab, but behind a gear at the right of the title
+label = "Tracker"                  # on each of the Quill's screens (`,` in the terminal), a page
+view = "tracker"                   # of its own with the way back. Settings that would be a section
+settings = true                    # at the foot of a screen go here. `admin = true` instead makes a
+                                   # view the server's settings, on the Quill's sheet under
+                                   # Administration › Quills, for an administrator alone.
+
 [[actions]]
 id = "log-service"                 # its button, `cm fleet log-service`, and an assistant's tool
 label = "Log a service"
