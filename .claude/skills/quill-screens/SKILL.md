@@ -23,7 +23,10 @@ surface. Reach for a **view** only when no kit element says it.
 | a conversation | `kit = "thread"` |
 | a team's conversation: threads, @mentions, reactions, pinned lines | `kit = "thread"` with `reply_to`, `mentions`, `reactions`, `pinned` |
 | pages of Markdown in folders | `kit = "editor"` |
+| a small spreadsheet: cells, numbers, formulas, with Excel files read and written | `kit = "sheet"` over the `.cell` and `.xlsx` files in a folder of the drive (`suffix = [".cell", ".xlsx"]`), as an editor is over `.md` files; Open from anywhere and Export as Excel, PDF or CSV come with it (docs/CELLS.md in the Cloudmorrow repository) |
+| documents: a basic Word, with Word files read and written | `kit = "document"` over the `.docs` and `.docx` files in a folder of the drive (`suffix = [".docs", ".docx"]`); Open from anywhere and Export as Word, PDF or Markdown come with it (docs/DOCS.md in the Cloudmorrow repository) |
 | files | `kit = "grid"` |
+| editing video: clips on video and audio tracks, cut, moved, blurred, exported | `kit = "timeline"` (docs/TIMELINE.md in the Cloudmorrow repository) |
 | a summary, a dashboard, numbers, a mix of the above, a record's own page | a **view** |
 
 The kit's bindings are in CLAUDE.md ("The kit"). Every kit screen already
@@ -77,6 +80,7 @@ Keep it quick: list what you need, filter on indexed fields
 | `image(record=…)` or `image("https://…")` | a picture: a file record, or an https address |
 | `table(records, columns=[…], actions=[…], open=True)` | records, a row each; `actions` are action ids pressed per row |
 | `cards(records, title=, subtitle=, body=, badge=)` | records, a card each (field names) |
+| `gallery(records, title=, subtitle=, badge=, stars=, rate=, actions=[…])` | files as picture tiles (a video's picture is a frame of it); `stars` names a 0–5 field drawn as stars, and pressing one runs the `rate` action with `stars=` |
 | `lanes(records, field=, title=)` | cards in columns by an enum field; dragging moves them |
 | `month(records, date=, title=)` | records on a month |
 | `field(record, name, edit=True)` | one field of one record, editable in place |
