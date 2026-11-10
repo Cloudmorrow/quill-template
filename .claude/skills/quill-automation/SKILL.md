@@ -30,6 +30,43 @@ A hook runs as whoever made the change, shortly after it, never in the way
 of the write. It is not told about what its own hooks wrote, and chains stop
 three deep: do not build ping-pong between two Quills.
 
+## Asking somebody responsible: roles and approvals
+
+Say which role the Quill expects, and the server makes it, empty, at install;
+an administrator picks who holds it (docs/FLOWS.md):
+
+```toml
+[[roles]]
+id = "team_lead"
+label = "Team lead"
+why = "to approve or decline time off"
+```
+
+```python
+@action
+def request(ctx, what):
+    leave = ctx.records.create("leave", what=what, ...)
+    asked = ctx.approvals.ask(leave, role="team_lead", question=f"Approve {what}?")
+    return [toast("Asked the team lead"), result(leave=leave.id, approval=asked.id)]
+```
+
+Whoever holds the role finds it under *Waiting for you* and answers; the
+answer is a change to the `approval` record, heard as a hook (list
+`approval` in `[uses]` to read it; asking needs nothing declared):
+
+```toml
+[[hooks]]
+on = "approval"
+when = "changed"
+fields = ["status"]
+handler = "answered"
+```
+
+`ctx.people(role="team_lead")` is who holds it; `ctx.user.roles` what the
+person the code runs for holds. `result(**values)` from an action is for
+a *flow* that pressed it — a procedure a person builds on a screen out of
+Quill actions, approvals and record changes, with no code of its own.
+
 ## Jobs: on a clock
 
 ```toml
@@ -59,7 +96,23 @@ the yes; removing the last Quill that needs it asks whether it goes too. A
 runtime the catalog does not list is a pull request to Cloudmorrow/quill-catalog
 with a build per OS and architecture and its SHA-256. In the service, call
 the program by name (`shutil.which("ffmpeg")` finds it) and still say
-something sensible on a clip when it is missing.
+something sensible on a clip when it is missing. With ffmpeg on the server,
+a video file has a thumbnail too (`ui.image(record=…)`, `ui.gallery`), so a
+Quill that only shows videos may require it without a service.
+
+## Another Quill it works with
+
+A Quill built on top of another one — an editor for what a library holds —
+names it, and installing it installs that one first, from the catalog:
+
+```toml
+[requires]
+quills = ["media"]          # Quill ids; installed with it, kept while it is here
+```
+
+The install sheet says *Installs with it: Media*. The other one cannot be
+removed while this one is here; it does not know about this one, and works
+alone. Each Quill still declares the datamodels it uses in `[uses]`.
 
 ## Webhooks: something outside tells you something
 
@@ -116,6 +169,44 @@ if answer.ok:
 
 A secret comes from the person's own vault (`cm secret set TRACKER_KEY`),
 and never when an assistant pressed the action.
+
+A key the whole server shares — an administrator's API key for a model —
+is a `secret = "quill"` field on a datamodel the Quill introduces, set by an
+`admin = true` action from the Quill's settings: the one record gives it to
+the Quill's own code alone, and to nobody through the record API.
+
+
+## An assistant's tools
+
+A Quill whose code talks to a model for the person declares no datamodel
+one by one:
+
+```toml
+[assistant]
+tools = true
+why = "to answer questions over your own data"
+
+[[actions]]
+id = "ask"
+label = "Ask"
+timeout = "3m"                          # an answer from a model takes a while; up to 5m
+assistant = false                       # not a tool for another assistant
+[actions.fields]
+message = { kind = "text", required = true }
+```
+
+```python
+tools = ctx.assistant.tools()  # name, description, input_schema: the record tools over what
+answer = ctx.assistant.call("list_records", {"model": "task"})  # the person's circles give, every
+if answer["ok"]:  # Quill's actions they may press, the Quill-building tools
+    tasks = answer["data"]["records"]  # — each run as the person, through the gate
+```
+
+The install sheet says *has an assistant's tools, as you*, and that is what
+is said yes to. `quill_check` and `quill_dev_install` take `mine = true`
+(one of the person's own, even for an administrator) and `code` (the
+quill.py). Code an assistant started is refused it.
+
 
 ## Test it
 
